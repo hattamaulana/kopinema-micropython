@@ -15,6 +15,7 @@ from .protocol import Websocket, urlparse
 class WebsocketClient(Websocket):
     is_client = True
 
+
 def connect(uri):
     """Connect a websocket.
 
@@ -23,8 +24,8 @@ def connect(uri):
     uri = urlparse(uri)
     assert uri
 
-    if __debug__: print("open connection %s:%s",
-                                uri.hostname, uri.port)
+    if __debug__ is False: print("open connection %s:%s",
+                                 uri.hostname, uri.port)
 
     sock = socket.socket()
     addr = socket.getaddrinfo(uri.hostname, uri.port)
@@ -33,7 +34,7 @@ def connect(uri):
         sock = ussl.wrap_socket(sock)
 
     def send_header(header, *args):
-        if __debug__: print(str(header), *args)
+        if __debug__ is False: print(str(header), *args)
         sock.write(header % args + '\r\n')
 
     # Sec-WebSocket-Key is 16 bytes of random base64 encoded
@@ -58,7 +59,7 @@ def connect(uri):
     # We don't (currently) need these headers
     # FIXME: should we check the return key?
     while header:
-        if __debug__: print(str(header))
+        if __debug__ is False: print(str(header))
         header = sock.readline()[:-2]
 
     return WebsocketClient(sock)

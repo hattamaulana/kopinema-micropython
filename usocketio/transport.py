@@ -1,13 +1,10 @@
 """SocketIO transport."""
 
-import logging
 import ujson as json
 import usocket as socket
 
 import uwebsockets.client
 from .protocol import *
-
-LOGGER = logging.getLogger(__name__)
 
 
 class SocketIO:
@@ -44,7 +41,7 @@ class SocketIO:
     def run_forever(self):
         """Main loop for SocketIO."""
         if __debug__:
-            LOGGER.debug("Entering event loop")
+            print("Entering event loop")
 
         counter = 0
 
@@ -65,7 +62,7 @@ class SocketIO:
                     func()
 
         if __debug__:
-            LOGGER.debug("Exiting event loop")
+            print("Exiting event loop")
 
     def _handle_packet(self, packet_type, data):
         if packet_type is None:
@@ -76,21 +73,21 @@ class SocketIO:
             self._handle_message(message_type, data)
 
         elif packet_type == PACKET_CLOSE:
-            LOGGER.info("Socket.io closed")
+            print("Socket.io closed")
             self.close()
 
         elif packet_type == PACKET_PING:
-            LOGGER.debug("< ping")
+            print("< ping")
             self._send_packet(PACKET_PONG, data)
 
         elif packet_type == PACKET_PONG:
-            LOGGER.debug("< pong")
+            print("< pong")
 
         elif packet_type == PACKET_NOOP:
             pass
 
         else:
-            LOGGER.warning("Unhandled packet %s: %s", packet_type, data)
+            print("Unhandled packet %s: %s", packet_type, data)
 
     def _handle_message(self, message_type, data):
         if message_type == MESSAGE_EVENT:
@@ -98,22 +95,22 @@ class SocketIO:
             self._handle_event(event, data)
 
         elif message_type == MESSAGE_ERROR:
-            LOGGER.error("Error: %s", data)
+            print("Error: %s", data)
 
         elif message_type == MESSAGE_DISCONNECT:
-            LOGGER.info("Disconnected")
+            print("Disconnected")
             self.close()
 
         else:
-            LOGGER.warning("Unhandled message %s: %s", message_type, data)
+            print("Unhandled message %s: %s", message_type, data)
 
     def _handle_event(self, event, data=None):
         if __debug__:
-            LOGGER.debug("Handling event '%s'", event)
+            print("Handling event '%s'", event)
 
         for handler in self._event_handlers.get(event, []):
             if __debug__:
-                LOGGER.debug("Calling handler %s for event '%s'",
+                print("Calling handler %s for event '%s'",
                              handler, event)
             handler(data)
 
@@ -126,7 +123,7 @@ class SocketIO:
 
     def ping(self):
         if __debug__:
-            LOGGER.debug("> ping")
+            print("> ping")
 
         self._send_packet(PACKET_PING)
 
@@ -153,7 +150,7 @@ class SocketIO:
 
         def inner(func):
             if __debug__:
-                LOGGER.debug("Registered %s to handle %s", func, event)
+                print("Registered %s to handle %s", func, event)
 
             self._event_handlers.setdefault(event, []).append(func)
 
@@ -164,7 +161,7 @@ class SocketIO:
 
         def inner(func):
             if __debug__:
-                LOGGER.debug("Registered %s to run at interval %s",
+                print("Registered %s to run at interval %s",
                              func, interval)
 
             self._interval_handlers.append((interval, func))

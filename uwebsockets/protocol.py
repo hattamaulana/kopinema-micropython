@@ -118,7 +118,7 @@ class Websocket:
             data = self.sock.read(length)
         except MemoryError:
             # We can't receive this many bytes, close the socket
-            if __debug__: print("Frame of length %s too big. Closing",
+            if __debug__ is False: print("Frame of length %s too big. Closing",
                                        length)
             self.close(code=CLOSE_TOO_BIG)
             return True, OP_CLOSE, None
@@ -207,7 +207,7 @@ class Websocket:
                 continue
             elif opcode == OP_PING:
                 # We need to send a pong frame
-                if __debug__: print("Sending PONG")
+                if __debug__ is False: print("Sending PONG")
                 self.write_frame(OP_PONG, data)
                 # And then wait to receive
                 continue
@@ -243,6 +243,6 @@ class Websocket:
         self._close()
 
     def _close(self):
-        if __debug__: print("Connection closed")
+        if __debug__ is False: print("Connection closed")
         self.open = False
         self.sock.close()

@@ -23,19 +23,14 @@ def _connect_to_websockets(url):
 
 
 def _connect_to_socketio(url):
-    with socketio.connect('http://'+ url) as sio:
+    with socketio.connect(url) as sio:
         @sio.on('message')
         def on_message(res):
-            print('message', res)
-
-        @sio.on('alert')
-        def on_alert(res):
-            print('alert', res)
-
-        sio.run_forever()
+            print(res)
 
 
 net = Network()
-net.is_connected()
+if net.is_connected():
     # _connect_to_<:target>('192.168.1.4:5000')
-    # _connect_to_websockets('192.168.1.4:5000')
+    #_connect_to_websockets('ws://192.168.1.4:5000')
+     _connect_to_socketio('http://192.168.1.4:5000/')
