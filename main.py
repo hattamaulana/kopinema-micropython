@@ -1,15 +1,12 @@
 from networking import Network
-from websocket import client
-import os
+from usocketio import client as socketio
+from uwebsockets import client as websockets
 
 
-net = Network()
+def _connect_to_websockets(url):
+    with websockets.connect("ws://"+ url) as sockets:
+        import os
 
-connection = net.is_connected()
-
-
-def tesSocketIo(url):
-    with client.connect(url) as socketio:
         uname = os.uname()
         name = '{sysname} {release} {version} {machine}'.format(
             sysname=uname.sysname,
@@ -18,9 +15,27 @@ def tesSocketIo(url):
             machine=uname.machine,
         )
 
-        socketio.send(name)
+        sockets.send(name)
         print("> {}".format(name))
 
-        while True:
-            greeting = socketio.recv()
-            print("< {}".format(greeting))
+        greeting = sockets.recv()
+        print("< {}".format(greeting))
+
+
+def _connect_to_socketio(url):
+    with socketio.connect('http://'+ url) as sio:
+        @sio.on('message')
+        def on_message(res):
+            print('message', res)
+
+        @sio.on('alert')
+        def on_alert(res):
+            print('alert', res)
+
+        sio.run_forever()
+
+
+net = Network()
+net.is_connected()
+    # _connect_to_<:target>('192.168.1.4:5000')
+    # _connect_to_websockets('192.168.1.4:5000')
