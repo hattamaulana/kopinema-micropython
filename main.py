@@ -30,7 +30,11 @@ def _connect_to_socketio(url):
 
 
 net = Network()
-if net.is_connected():
+# if net.is_connected():
     # _connect_to_<:target>('192.168.1.4:5000')
     #_connect_to_websockets('ws://192.168.1.4:5000')
-     _connect_to_socketio('http://192.168.1.4:5000/')
+    #_connect_to_socketio('http://192.168.1.4:5000/')
+
+
+# while True:
+#
