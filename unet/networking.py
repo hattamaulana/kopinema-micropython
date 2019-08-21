@@ -1,10 +1,10 @@
-from network import WLAN, STA_IF
-
+from network import WLAN, STA_IF, AP_IF
 
 class Network():
 
     def __init__(self):
         self.wlan = WLAN(STA_IF)
+        self.ap = WLAN(AP_IF)
 
     def is_active(self):
         """Checking Active Module
@@ -67,3 +67,16 @@ class Network():
         """
         self.is_connected()
         print("Status : ", self.wlan.ifconfig())
+
+    def activate_ap(self, essid):
+        if self.ap.active():
+            print('Access Point Active')
+            self.ap.config(essid=essid, password='12345678')
+
+        else:
+            print('Access Point Non Active')
+            self.ap.active(True)
+
+    def deactivate_ap(self):
+        self.ap.active(False)
+        print('Deactivate Access Point')
